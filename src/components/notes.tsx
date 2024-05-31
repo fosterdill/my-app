@@ -147,7 +147,7 @@ export function Notes() {
     <div className="flex size-full h-full flex-col">
       <header className="sticky top-0 flex w-full flex-row justify-between bg-gray-100 px-6 py-4 dark:bg-gray-800">
         <h1 className="text-2xl font-bold">Notes</h1>
-        <Link className={cn(buttonVariants({ variant: 'outline' }), 'mr-2')} href={uiRoutes.signIn}>
+        <Link className={cn(buttonVariants({ variant: 'outline' }), 'mr-2')} href={uiRoutes.signOut}>
           Sign out
         </Link>
       </header>
