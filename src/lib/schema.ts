@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { boolean, integer, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core';
 import type { AdapterAccount } from 'next-auth/adapters';
 
@@ -103,6 +104,7 @@ export const notes = pgTable('note', {
     .references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   content: text('content').notNull(),
-  createdAt: timestamp('createdAt', { mode: 'date' }).notNull(),
-  updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });
