@@ -29,7 +29,7 @@ import { Note, NotePutBody } from '@/lib/schema';
 
 import { AlertDialogFooter, AlertDialogHeader } from './ui/alert-dialog';
 
-export function NoteCard({ note }: { note: Note }) {
+export function NoteCard({ note, key }: { note: Note; key: string }) {
   const queryClient = useQueryClient();
   const axios = useAxios();
   const [editNote, setEditNote] = useState<Note | null>(null);
@@ -53,10 +53,10 @@ export function NoteCard({ note }: { note: Note }) {
   const updateNote = useMutation({
     mutationFn: async ({ id, note }: { id: string; note: NotePutBody }) =>
       axios.put<Note>(`/notes/${id}`, note).then((res) => res.data),
-    onMutate: async (note) => {
+    onMutate: async ({ id, note }: { id: string; note: NotePutBody }) => {
       await queryClient.cancelQueries({ queryKey: ['notes'] });
       const previousNotes = queryClient.getQueryData<Note[]>(['notes']);
-      const updatedNotes = previousNotes?.map((n) => (n.id === note.id ? note : n));
+      const updatedNotes = previousNotes?.map((n) => (n.id === id ? { ...n, ...note } : n));
       queryClient.setQueryData(['notes'], updatedNotes);
       return { previousNotes };
     },
@@ -89,7 +89,7 @@ export function NoteCard({ note }: { note: Note }) {
   };
 
   return (
-    <Card key={note.id}>
+    <Card key={key}>
       <CardHeader>
         <CardTitle>{note.title}</CardTitle>
         <div className="flex items-center space-x-2">
