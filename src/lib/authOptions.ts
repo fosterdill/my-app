@@ -1,6 +1,7 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { SessionStrategy } from 'next-auth';
+import { Session, SessionStrategy } from 'next-auth';
 import { Adapter } from 'next-auth/adapters';
+import { JWT } from 'next-auth/jwt';
 import Github from 'next-auth/providers/github';
 
 import { db } from '@/lib/db';
@@ -10,7 +11,14 @@ const authOptions = {
   session: {
     strategy: 'jwt' as SessionStrategy,
   },
+  strategy: 'jwt',
   secret: process.env.NEXTAUTH_SECRET!,
+  callbacks: {
+    async session({ token, session }: { token: JWT; session: Session }) {
+      session.user.id = token.sub;
+      return session;
+    },
+  },
   providers: [
     Github({
       clientId: process.env.GITHUB_CLIENT_ID!,

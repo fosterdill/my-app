@@ -10,12 +10,7 @@ import { notes } from '@/lib/schema';
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req });
-
-    if (!token || !token.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const userNotes = await db.select().from(notes).where(eq(notes.userId, token.sub));
+    const userNotes = await db.select().from(notes).where(eq(notes.userId, token!.sub!));
 
     return NextResponse.json(userNotes, { status: 200 });
   } catch (error) {
@@ -26,12 +21,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
-    if (!token || !token.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
     const { title, content } = await req.json();
     const newNote = await db.insert(notes).values({
-      userId: token.sub,
+      userId: token!.sub!,
       title,
       content,
     });

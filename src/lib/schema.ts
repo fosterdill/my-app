@@ -108,3 +108,6 @@ export const notes = pgTable('note', {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
+
+export type Note = typeof notes.$inferSelect;
+export type NotePutBody = Omit<Note, 'id' | 'createdAt' | 'userId'>;

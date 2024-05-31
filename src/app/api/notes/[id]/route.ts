@@ -8,9 +8,6 @@ import { notes } from '@/lib/schema';
 export async function PUT(req: NextRequest, { params: { id } }: { params: { id: string } }) {
   try {
     const token = await getToken({ req });
-    if (!token || !token.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
     const { title, content } = await req.json();
     const updatedNote = await db
       .update(notes)
@@ -18,9 +15,22 @@ export async function PUT(req: NextRequest, { params: { id } }: { params: { id: 
         title,
         content,
       })
-      .where(and(eq(notes.userId, token.sub), eq(notes.id, id)))
+      .where(and(eq(notes.userId, token!.sub!), eq(notes.id, id)))
       .returning();
     return NextResponse.json(updatedNote, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest, { params: { id } }: { params: { id: string } }) {
+  try {
+    const token = await getToken({ req });
+    await db
+      .delete(notes)
+      .where(and(eq(notes.userId, token!.sub!), eq(notes.id, id)))
+      .execute();
+    return NextResponse.json({ message: 'Note deleted successfully' }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
