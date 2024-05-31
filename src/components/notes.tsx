@@ -92,50 +92,60 @@ export function Notes() {
     console.log(note);
   };
 
+  const notesCards = (
+    <div className="flex-1 overflow-y-auto p-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {notes.map((note) => (
+          <Card key={note.id}>
+            <CardHeader>
+              <CardTitle>{note.title}</CardTitle>
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="icon" onClick={() => handleEdit(note)}>
+                  <PencilIcon className="size-4" />
+                  <span className="sr-only">Edit</span>
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    {' '}
+                    <Button variant="ghost" size="icon">
+                      <TrashIcon className="size-4 stroke-red-500" />
+                      <span className="sr-only">Delete</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>You cannot undo deletion of a note.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction variant="destructive" onClick={() => handleDelete(note.id)}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </CardHeader>
+            <CardContent className="text-sm text-gray-500 dark:text-gray-400">{note.content}</CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  const createNotesMessage = (
+    <div className="flex flex-1 items-center justify-center p-6">
+      <p>Create a note.</p>
+    </div>
+  );
+
   return (
     <div className="flex size-full h-full flex-col">
       <header className="sticky top-0 w-full bg-gray-100 px-6 py-4 dark:bg-gray-800">
         <h1 className="text-2xl font-bold">Notes</h1>
       </header>
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {notes.map((note) => (
-            <Card key={note.id}>
-              <CardHeader>
-                <CardTitle>{note.title}</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="icon" onClick={() => handleEdit(note)}>
-                    <PencilIcon className="size-4" />
-                    <span className="sr-only">Edit</span>
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger>
-                      {' '}
-                      <Button variant="ghost" size="icon">
-                        <TrashIcon className="size-4 stroke-red-500" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>You cannot undo deletion of a note.</AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction variant="destructive" onClick={() => handleDelete(note.id)}>
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </CardHeader>
-              <CardContent className="text-sm text-gray-500 dark:text-gray-400">{note.content}</CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      {notes.length ? notesCards : createNotesMessage}
       <div className="sticky bottom-0 bg-gray-100 px-6 py-4 dark:bg-gray-800">
         <form className="flex items-center space-x-4">
           <div className="flex-1">
