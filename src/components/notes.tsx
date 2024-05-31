@@ -93,8 +93,8 @@ export function Notes() {
   };
 
   return (
-    <div className="flex size-full flex-col">
-      <header className="bg-gray-100 px-6 py-4 dark:bg-gray-800">
+    <div className="flex size-full h-full flex-col">
+      <header className="sticky top-0 w-full bg-gray-100 px-6 py-4 dark:bg-gray-800">
         <h1 className="text-2xl font-bold">Notes</h1>
       </header>
       <div className="flex-1 overflow-y-auto p-6">
@@ -136,7 +136,7 @@ export function Notes() {
           ))}
         </div>
       </div>
-      <div className="bg-gray-100 px-6 py-4 dark:bg-gray-800">
+      <div className="sticky bottom-0 bg-gray-100 px-6 py-4 dark:bg-gray-800">
         <form className="flex items-center space-x-4">
           <div className="flex-1">
             <Input
