@@ -1,3 +1,4 @@
 export const uiRoutes = {
-  signin: '/api/auth/signin',
+  signIn: '/api/auth/signin',
+  signOut: '/api/auth/signout',
 };
