@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useRef, useState } from 'react';
 
 import useAxios from '@/app/hooks/useAxios';
@@ -11,9 +12,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { uiRoutes } from '@/constants/uiRoutes';
 import { Note, NotePutBody } from '@/lib/schema';
+import { cn } from '@/lib/utils';
 
 import { AlertDialogFooter, AlertDialogHeader } from './ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -142,8 +145,11 @@ export function Notes() {
 
   return (
     <div className="flex size-full h-full flex-col">
-      <header className="sticky top-0 w-full bg-gray-100 px-6 py-4 dark:bg-gray-800">
+      <header className="sticky top-0 flex w-full flex-row justify-between bg-gray-100 px-6 py-4 dark:bg-gray-800">
         <h1 className="text-2xl font-bold">Notes</h1>
+        <Link className={cn(buttonVariants({ variant: 'outline' }), 'mr-2')} href={uiRoutes.signIn}>
+          Sign out
+        </Link>
       </header>
       {notes.length ? notesCards : createNotesMessage}
       <div className="sticky bottom-0 bg-gray-100 px-6 py-4 dark:bg-gray-800">
