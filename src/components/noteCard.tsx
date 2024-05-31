@@ -101,27 +101,40 @@ export function NoteCard({ note, key }: { note: Note; key: string }) {
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Edit note</DialogTitle>
-                <DialogDescription>Make changes to your note here.</DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="title" className="text-right">
-                    Title
-                  </Label>
-                  <Input onChange={handleTitleChange} id="title" value={editNote?.title} className="col-span-3" />
+              <form
+                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                  e.preventDefault();
+                }}
+              >
+                <DialogHeader>
+                  <DialogTitle>Edit note</DialogTitle>
+                  <DialogDescription>Make changes to your note here.</DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="title" className="text-right">
+                      Title
+                    </Label>
+                    <Input onChange={handleTitleChange} id="title" value={editNote?.title} className="col-span-3" />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="content" className="text-right">
+                      Content
+                    </Label>
+                    <Input
+                      onChange={handleContentChange}
+                      id="content"
+                      value={editNote?.content}
+                      className="col-span-3"
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="content" className="text-right">
-                    Content
-                  </Label>
-                  <Input onChange={handleContentChange} id="content" value={editNote?.content} className="col-span-3" />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button onClick={handleEditConfirm}>Save changes</Button>
-              </DialogFooter>
+                <DialogFooter>
+                  <Button type="submit" onClick={handleEditConfirm}>
+                    Save changes
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
           <AlertDialog>
