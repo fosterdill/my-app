@@ -65,7 +65,7 @@ export function Notes() {
   const notesCards = (
     <div className="flex-1 overflow-y-auto p-6">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {sortBy(notes, ['id']).map((note: Note) => (
+        {sortBy(notes, ['createdAt']).map((note: Note) => (
           <NoteCard key={note.id} note={note} />
         ))}
       </div>
