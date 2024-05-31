@@ -1,6 +1,6 @@
 {
-  "id": "18f99ea7-4f73-46ff-bd5f-2c4c88961614",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "29738813-81ea-40f5-9164-eac29b4fa25c",
+  "prevId": "18f99ea7-4f73-46ff-bd5f-2c4c88961614",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -190,6 +190,28 @@
         }
       }
     },
+    "public.role": {
+      "name": "role",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.session": {
       "name": "session",
       "schema": "",
@@ -221,6 +243,55 @@
           "tableTo": "user",
           "columnsFrom": [
             "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.userRole": {
+      "name": "userRole",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "roleId": {
+          "name": "roleId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "userRole_userId_user_id_fk": {
+          "name": "userRole_userId_user_id_fk",
+          "tableFrom": "userRole",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "userRole_roleId_role_id_fk": {
+          "name": "userRole_roleId_role_id_fk",
+          "tableFrom": "userRole",
+          "tableTo": "role",
+          "columnsFrom": [
+            "roleId"
           ],
           "columnsTo": [
             "id"
