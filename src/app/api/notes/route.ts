@@ -40,29 +40,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error }, { status: 500 });
   }
 }
-
-export async function PUT(req: NextRequest) {
-  try {
-    const token = await getToken({ req });
-
-    if (!token || !token.sub) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { id, title, content } = await req.json();
-
-    const updatedNote = await db
-      .update(notes)
-      .set({
-        title,
-        content,
-      })
-      .where(eq(notes.id, id))
-      .returning();
-
-    return NextResponse.json(updatedNote, { status: 200 });
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json({ error }, { status: 500 });
-  }
-}
