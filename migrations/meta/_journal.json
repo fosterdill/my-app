@@ -15,6 +15,13 @@
       "when": 1717128239041,
       "tag": "0001_wandering_jazinda",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1717129184703,
+      "tag": "0002_complex_agent_brand",
+      "breakpoints": true
     }
   ]
 }
