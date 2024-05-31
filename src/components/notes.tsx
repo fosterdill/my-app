@@ -3,23 +3,13 @@ import Link from 'next/link';
 import { useRef, useState } from 'react';
 
 import useAxios from '@/app/hooks/useAxios';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { uiRoutes } from '@/constants/uiRoutes';
 import { Note, NotePutBody } from '@/lib/schema';
 import { cn } from '@/lib/utils';
 
-import { AlertDialogFooter, AlertDialogHeader } from './ui/alert-dialog';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { NoteCard } from './noteCard';
 
 export function Notes() {
   const queryClient = useQueryClient();
@@ -48,26 +38,6 @@ export function Notes() {
     },
   });
 
-  const deleteNote = useMutation({
-    mutationFn: async (id: string) => axios.delete(`/notes/${id}`),
-    onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: ['notes'] });
-      const previousNotes = queryClient.getQueryData<Note[]>(['notes']);
-      queryClient.setQueryData(['notes'], (old: Note[]) => old.filter((note) => note.id !== id));
-      return { previousNotes };
-    },
-    onError: (err, variables, context) => {
-      if (context) queryClient.setQueryData(['notes'], context.previousNotes);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-    },
-  });
-
-  const handleDelete = (id: string) => {
-    deleteNote.mutate(id);
-  };
-
   const handleAddNote = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -91,47 +61,11 @@ export function Notes() {
     setContent(e.target.value);
   };
 
-  const handleEdit = (note: Note) => {
-    console.log(note);
-  };
-
   const notesCards = (
     <div className="flex-1 overflow-y-auto p-6">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {notes.map((note) => (
-          <Card key={note.id}>
-            <CardHeader>
-              <CardTitle>{note.title}</CardTitle>
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" onClick={() => handleEdit(note)}>
-                  <PencilIcon className="size-4" />
-                  <span className="sr-only">Edit</span>
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    {' '}
-                    <Button variant="ghost" size="icon">
-                      <TrashIcon className="size-4 stroke-red-500" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>You cannot undo deletion of a note.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction variant="destructive" onClick={() => handleDelete(note.id)}>
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </CardHeader>
-            <CardContent className="text-sm text-gray-500 dark:text-gray-400">{note.content}</CardContent>
-          </Card>
+          <NoteCard note={note} />
         ))}
       </div>
     </div>
@@ -179,46 +113,5 @@ export function Notes() {
         </form>
       </div>
     </div>
-  );
-}
-
-function PencilIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-      <path d="m15 5 4 4" />
-    </svg>
-  );
-}
-
-function TrashIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M3 6h18" />
-      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-    </svg>
   );
 }
