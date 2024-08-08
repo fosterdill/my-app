@@ -1,42 +1,115 @@
 require('dotenv').config({ path: '.env.local' });
-
 import AnthropicApi from '@anthropic-ai/sdk';
+import { ContentBlock, MessageParam, ToolResultBlockParam } from '@anthropic-ai/sdk/resources/messages.mjs';
+import readline from 'readline';
 
 const client = new AnthropicApi({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-async function getJoke(topic: string) {
+async function getCompletion(messages: MessageParam[]) {
   try {
     const response = await client.messages.create({
-      model: 'claude-3-opus-20240229',
-      max_tokens: 1000,
-      system:
-        'You are a joke assistant. Your primary function is to tell jokes based on the given topic. Always respond with a joke, even if the topic is unusual or challenging.',
-      messages: [
+      model: 'claude-3-sonnet-20240229',
+      max_tokens: 1024,
+      system: 'You are a weather assistant. You respond with current weather for a given location.',
+      tools: [
         {
-          role: 'user',
-          content: `Tell me a joke about ${topic}`,
+          name: 'get_topic',
+          description: 'Get the current weather for a location',
+          input_schema: {
+            type: 'object',
+            properties: {
+              location: { type: 'string', description: 'The location' },
+            },
+            required: ['location'],
+          },
         },
       ],
+      messages,
     });
 
-    if ('text' in response.content[0]) {
-      return response.content[0].text;
-    }
-
-    return "Sorry, I couldn't come up with a joke right now.";
+    return response.content;
   } catch (error) {
     console.error('Error:', error);
-    return "Sorry, I couldn't come up with a joke right now.";
+    return null;
+  }
+}
+
+async function getUserInput(prompt: string): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    process.stdout.write(prompt);
+    process.stdout.write('\n> ');
+    let input = '';
+
+    rl.on('line', (line) => {
+      rl.close();
+      resolve(input + line);
+    });
+
+    rl.on('data', (chunk) => {
+      input += chunk;
+    });
+  });
+}
+
+async function processAiResponse(contentBlock: ContentBlock) {
+  switch (contentBlock.type) {
+    case 'text':
+      console.log(contentBlock.text);
+      return null;
+    case 'tool_use':
+      if (contentBlock.name === 'get_topic') {
+        return { type: 'tool_result', tool_use_id: contentBlock.id, content: '15 degrees f' } as ToolResultBlockParam;
+      }
+      return null;
   }
 }
 
 // Example usage
 async function main() {
-  const topic = process.argv[2] || 'programming';
-  const joke = await getJoke(topic);
-  console.log(joke);
+  let messages: MessageParam[] = [];
+
+  const userInput = await getUserInput('');
+  messages.push({
+    role: 'user',
+    content: userInput,
+  });
+  const aiResponse = await getCompletion(messages);
+  messages.push({
+    role: 'assistant',
+    content: aiResponse || [],
+  });
+
+  let hadResult = false;
+  if (aiResponse) {
+    for (const block of aiResponse) {
+      const result = await processAiResponse(block);
+      if (result) {
+        hadResult = true;
+        messages.push({
+          role: 'user',
+          content: [result],
+        });
+      }
+    }
+  }
+
+  if (hadResult) {
+    const aiResponse2 = await getCompletion(messages);
+    if (aiResponse2) {
+      for (const block of aiResponse2) {
+        if (block.type === 'text') {
+          console.log(block.text);
+        }
+      }
+    }
+  }
 }
 
 main();
