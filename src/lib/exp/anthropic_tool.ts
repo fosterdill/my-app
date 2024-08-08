@@ -1,7 +1,8 @@
 require('dotenv').config({ path: '.env.local' });
 import AnthropicApi from '@anthropic-ai/sdk';
 import { ContentBlock, MessageParam, ToolResultBlockParam } from '@anthropic-ai/sdk/resources/messages.mjs';
-import readline from 'readline';
+
+import getUserInput from './getUserInput';
 
 const client = new AnthropicApi({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -34,28 +35,6 @@ async function getCompletion(messages: MessageParam[]) {
     console.error('Error:', error);
     return null;
   }
-}
-
-async function getUserInput(prompt: string): Promise<string> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise((resolve) => {
-    process.stdout.write(prompt);
-    process.stdout.write('\n> ');
-    let input = '';
-
-    rl.on('line', (line) => {
-      rl.close();
-      resolve(input + line);
-    });
-
-    rl.on('data', (chunk) => {
-      input += chunk;
-    });
-  });
 }
 
 async function processAiResponse(contentBlock: ContentBlock) {
