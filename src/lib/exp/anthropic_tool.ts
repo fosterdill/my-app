@@ -16,7 +16,7 @@ async function getCompletion(messages: MessageParam[]) {
       system: 'You are a weather assistant. You respond with current weather for a given location.',
       tools: [
         {
-          name: 'get_topic',
+          name: 'get_weather',
           description: 'Get the current weather for a location',
           input_schema: {
             type: 'object',
@@ -37,54 +37,61 @@ async function getCompletion(messages: MessageParam[]) {
   }
 }
 
-async function processAiResponse(contentBlock: ContentBlock) {
-  switch (contentBlock.type) {
-    case 'text':
-      console.log(contentBlock.text);
-      return null;
-    case 'tool_use':
-      if (contentBlock.name === 'get_topic') {
-        return { type: 'tool_result', tool_use_id: contentBlock.id, content: '15 degrees f' } as ToolResultBlockParam;
-      }
-      return null;
+const weatherData = {
+  ny: '15 degrees f',
+  la: '20 degrees f',
+  chicago: '10 degrees f',
+  houston: '12 degrees f',
+  miami: '25 degrees f',
+};
+
+async function processAiResponse(contentBlock: ContentBlock): Promise<ToolResultBlockParam | null> {
+  if (contentBlock.type === 'text') {
+    console.log(contentBlock.text);
+    return null;
   }
+
+  if (contentBlock.type === 'tool_use' && contentBlock.name === 'get_weather') {
+    // Here you would typically make an API call to get real weather data
+    console.log(contentBlock.input);
+    return {
+      type: 'tool_result',
+      tool_use_id: contentBlock.id,
+      content: weatherData[(contentBlock.input as { location: string }).location as keyof typeof weatherData],
+    };
+  }
+
+  return null;
 }
 
-// Example usage
 async function main() {
   let messages: MessageParam[] = [];
 
-  const userInput = await getUserInput('');
-  messages.push({
-    role: 'user',
-    content: userInput,
-  });
-  const aiResponse = await getCompletion(messages);
-  messages.push({
-    role: 'assistant',
-    content: aiResponse || [],
-  });
+  while (true) {
+    const userInput = await getUserInput('Enter your message (or type "exit" to quit): ');
 
-  let hadResult = false;
-  if (aiResponse) {
+    if (userInput.toLowerCase() === 'exit') {
+      console.log('Goodbye!');
+      break;
+    }
+
+    messages.push({ role: 'user', content: userInput });
+
+    const aiResponse = await getCompletion(messages);
+    if (!aiResponse) continue;
+
+    messages.push({ role: 'assistant', content: aiResponse });
+
     for (const block of aiResponse) {
       const result = await processAiResponse(block);
       if (result) {
-        hadResult = true;
-        messages.push({
-          role: 'user',
-          content: [result],
-        });
-      }
-    }
-  }
-
-  if (hadResult) {
-    const aiResponse2 = await getCompletion(messages);
-    if (aiResponse2) {
-      for (const block of aiResponse2) {
-        if (block.type === 'text') {
-          console.log(block.text);
+        messages.push({ role: 'user', content: [result] });
+        const followUpResponse = await getCompletion(messages);
+        if (followUpResponse) {
+          followUpResponse.forEach((block) => {
+            if (block.type === 'text') console.log(block.text);
+          });
+          messages.push({ role: 'assistant', content: followUpResponse });
         }
       }
     }
