@@ -11,7 +11,7 @@ const client = new AnthropicApi({
 async function getCompletion(messages: MessageParam[]) {
   try {
     const response = await client.messages.create({
-      model: 'claude-3-sonnet-20240229',
+      model: 'claude-3-haiku-20240307',
       max_tokens: 1024,
       system: 'You are a weather assistant. You respond with current weather for a given location.',
       tools: [

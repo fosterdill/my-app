@@ -50,7 +50,7 @@ let conversationHistory: ChatCompletionMessageParam[] = [
 async function getCompletion(convHistory: ChatCompletionMessageParam[]) {
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       messages: convHistory,
     });
 
