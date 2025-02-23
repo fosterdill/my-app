@@ -37,7 +37,7 @@ export default function OscillatorPage() {
   const [osc2Octave, setOsc2Octave] = useState(0); // Octave shift for osc2 (-2 to +2)
   const [oscMix, setOscMix] = useState(0.5); // Balance between osc1 and osc2
   const [detune, setDetune] = useState(0); // Detune amount in cents
-  const [volume, setVolume] = useState(0.5);
+  const [volume] = useState(0.5);
   const [filterCutoff, setFilterCutoff] = useState(2000);
   const [filterResonance, setFilterResonance] = useState(1);
   const [filterEnvAmount, setFilterEnvAmount] = useState(0.5);
@@ -64,7 +64,7 @@ export default function OscillatorPage() {
   const [filterAttack, setFilterAttack] = useState(0.1);
   const [filterDecay, setFilterDecay] = useState(0.3);
   const [filterSustain, setFilterSustain] = useState(0.4);
-  const [filterRelease, setFilterRelease] = useState(0.2);
+  const [filterRelease] = useState(0.2);
 
   const drawKnob = useCallback((ctx: CanvasRenderingContext2D, x: number, y: number, value: number, label: string) => {
     const radius = 30;
