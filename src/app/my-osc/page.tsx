@@ -1,11 +1,12 @@
 'use client';
 
+import { useEffect } from 'react';
+
+import { useOscillator } from '@/app/hooks/useOscillator';
 import { useWidget } from '@/app/hooks/useWidget';
 import WidgetGrid from '@/components/widgetGrid';
 import { createKnobWidget } from '@/factories/createKnobWidget';
 import { createSliderWidget } from '@/factories/createSliderWidget';
-import { useOscillator } from '@/app/hooks/useOscillator';
-import { useEffect } from 'react';
 
 export default function MyOsc() {
   const audioContext = new AudioContext();
