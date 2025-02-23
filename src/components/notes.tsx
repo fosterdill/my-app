@@ -8,7 +8,6 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { uiRoutes } from '@/constants/uiRoutes';
 import { Note, NotePutBody } from '@/lib/schema';
-import { cn } from '@/lib/utils';
 
 import { NoteCard } from './noteCard';
 
@@ -82,9 +81,14 @@ export function Notes() {
     <div className="flex size-full h-full flex-col">
       <header className="sticky top-0 flex w-full flex-row justify-between bg-gray-100 px-6 py-4 dark:bg-gray-800">
         <h1 className="text-2xl font-bold">Notes</h1>
-        <Link className={cn(buttonVariants({ variant: 'outline' }), 'mr-2')} href={uiRoutes.signOut}>
-          Sign out
-        </Link>
+        <div className="flex gap-2">
+          <Link className={buttonVariants({ variant: 'outline' })} href="/my-osc">
+            My OSC
+          </Link>
+          <Link className={buttonVariants({ variant: 'outline' })} href={uiRoutes.signOut}>
+            Sign out
+          </Link>
+        </div>
       </header>
       {notes.length ? notesCards : createNotesMessage}
       <div className="sticky bottom-0 bg-gray-100 px-6 py-4 dark:bg-gray-800">
