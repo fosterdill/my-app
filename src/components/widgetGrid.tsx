@@ -17,7 +17,7 @@ interface WidgetGridProps {
   rows?: number;
 }
 
-export default function WidgetGrid({ widgets, cols = 8, rows = 6 }: WidgetGridProps) {
+export default function WidgetGrid({ widgets, cols = 10, rows = 6 }: WidgetGridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeWidget, setActiveWidget] = useState<number | null>(null);
   const [lastY, setLastY] = useState(0);
