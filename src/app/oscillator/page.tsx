@@ -17,6 +17,7 @@ const NOTE_FREQUENCIES: Record<string, number> = {
   m: 493.88, // B4
   ',': 523.25, // C5
 };
+const w = typeof window !== 'undefined' ? window : null;
 
 export default function OscillatorPage() {
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -305,12 +306,12 @@ export default function OscillatorPage() {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    w?.addEventListener('keydown', handleKeyDown);
+    w?.addEventListener('keyup', handleKeyUp);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      w?.removeEventListener('keydown', handleKeyDown);
+      w?.removeEventListener('keyup', handleKeyUp);
     };
   }, [startNote, stopNote]);
 
